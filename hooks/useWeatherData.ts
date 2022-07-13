@@ -3,8 +3,8 @@ import { RequestModel } from "../models/WeatherRequestModel";
 
 const baseUrl ='https://api.meteomatics.com/';
 const prefType = "/json";
-const username = "helloworldgmbh_world";
-const password = "12YWciV6Aj";
+const username = "***";
+const password = "***";
 
 export default function useCachedResources() {
 
@@ -20,11 +20,11 @@ export default function useCachedResources() {
     const url = createRequestTimezone1hUrl('t_2m:C,weather_symbol_1h:idx',dateBegin.toISOString(),date.toISOString(),coordinates);
 
     return axios.get<AxiosResponse<Array<RequestModel>>>(url, 
-        {auth: {username: 'helloworldgmbh_world', password: '12YWciV6Aj'}})
+        {auth: {username: username, password: password}})
         
   };
 
-  async function fetchMinMaxDataPast24hNext10Days (coordinates: string) {
+  async function fetchMinMaxDataPast24hNext10Days(coordinates: string) {
 
     const date = new Date();
 
@@ -37,7 +37,7 @@ export default function useCachedResources() {
     const url = createRequestTimezoneUrl('t_min_2m_24h:C,t_max_2m_24h:C,weather_symbol_24h:idx',date.toISOString(),dateEnd.toISOString(),coordinates);
 
     return axios.get(url, 
-        {auth: {username: 'helloworldgmbh_world', password: '12YWciV6Aj'}});
+        {auth: {username: username, password: password}});
   };
 
 

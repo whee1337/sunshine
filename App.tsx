@@ -1,22 +1,35 @@
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import useCachedResources from './hooks/useCachedResources';
-import useColorScheme from './hooks/useColorScheme';
-import Navigation from './navigation';
+import {DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import React from 'react';
+import WeatherMain from './components/WeatherMain';
+import {ImageLoader} from './components/img/ImageLoader';
+import  Colors from './constants/Colors';
+
+import {decode, encode} from 'base-64'
+
+if (!global.btoa) {  global.btoa = encode }
+
+if (!global.atob) { global.atob = decode } 
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary:'#69A297',
+    accent: '#50808E',
+    background: '#DDD8C4'
+  },
+};
+
 
 export default function App() {
-  const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
 
-  if (!isLoadingComplete) {
-    return null;
-  } else {
+   ImageLoader("./");
+    
     return (
-      <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
-      </SafeAreaProvider>
+      <PaperProvider theme={theme}>
+        <WeatherMain></WeatherMain>
+      </PaperProvider>
     );
   }
-}
+

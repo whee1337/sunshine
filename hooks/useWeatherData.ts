@@ -3,8 +3,8 @@ import { RequestModel } from "../models/WeatherRequestModel";
 
 const baseUrl ='https://api.meteomatics.com/';
 const prefType = "/json";
-const username = "***";
-const password = "***";
+const username = "helloworldgmbh_world";
+const password = "12YWciV6Aj";
 
 export default function useCachedResources() {
 
@@ -21,7 +21,6 @@ export default function useCachedResources() {
 
     return axios.get<AxiosResponse<Array<RequestModel>>>(url, 
         {auth: {username: username, password: password}})
-        
   };
 
   async function fetchMinMaxDataPast24hNext10Days(coordinates: string) {

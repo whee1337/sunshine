@@ -4,7 +4,7 @@ import React from 'react';
 import WeatherMain from './components/WeatherMain';
 import {ImageLoader} from './components/img/ImageLoader';
 import  Colors from './constants/Colors';
-
+import 'react-native-gesture-handler';
 import {decode, encode} from 'base-64'
 
 if (!global.btoa) {  global.btoa = encode }

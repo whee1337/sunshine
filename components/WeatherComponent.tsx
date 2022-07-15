@@ -1,12 +1,13 @@
 
 import React, { useEffect, useState } from 'react'; // we need this to make JSX compile
-import { ActivityIndicator, Snackbar, Text } from 'react-native-paper';
+import { ActivityIndicator, Appbar, Snackbar, Text } from 'react-native-paper';
 import useWeatherData from '../hooks/useWeatherData';
 import { DisplayModel, DisplayTableModel, toMainDisplayModel, toTableDisplayModel } from '../models/WeatherRequestModel';
 import { StyleSheet, View } from 'react-native';
 import { ColorSet } from '../constants/Colors';
 import WeatherDetailed from './WeatherDetailed';
 import WeatherTable from './WeatherTable';
+import WeatherChart from './WeatherChart';
 
 const styles = StyleSheet.create({
   stretch: {
@@ -31,23 +32,18 @@ type WeatherComponentProps = {
 
 const WeatherComponent = ({ ort, coordinates }: WeatherComponentProps) => {
 
-  const [mainDate, setMainDate] = useState<Date>(new Date());
   const [response, setResponse] = useState<DisplayModel[]>(new Array);
   const [responseTable, setResponseTable] = useState<DisplayTableModel[]>(new Array);
 
   const [loadingMain, setLoadingMain] = useState<boolean>(true);
   const [loadingTable, setLoadingTable] = useState<boolean>(true);
 
-  const [snackBarVisible, setSnackbarVisible] = useState<boolean>(false);
-
-  const [textSnackbar, setTextSnackbar] = useState<string>("");
+  const [isDetailedView, setDetailedView] = useState<boolean>(true);
 
   const { fetchData24h, fetchMinMaxDataPast24hNext10Days } = useWeatherData();
 
   useEffect(() => {
     setLoadingMain(true);
-    setResponse(new Array);
-
 
     fetchData24h(coordinates).then(value => {
 
@@ -58,19 +54,14 @@ const WeatherComponent = ({ ort, coordinates }: WeatherComponentProps) => {
       setLoadingMain(false);
     }
     )
-
       ;
   }, []);
 
   useEffect(() => {
     setLoadingTable(true);
-    setResponseTable(new Array);
 
-    fetchMinMaxDataPast24hNext10Days(coordinates).catch(error => {
-        setSnackbarVisible(true);
-        setTextSnackbar(error.toString());
-    }).then(value => {
-
+    fetchMinMaxDataPast24hNext10Days(coordinates).then(value => {
+        
       const res = value.data.data;
       const tableDisplayModel: Array<DisplayTableModel> = toTableDisplayModel(res);
 
@@ -81,30 +72,36 @@ const WeatherComponent = ({ ort, coordinates }: WeatherComponentProps) => {
   }, []);
 
 
-  if (loadingMain && loadingTable)
+  if (loadingMain || loadingTable)
     return <View style={styles.centered}>
       <ActivityIndicator size='large' animating={true} color={ColorSet.c4} />
-      <Snackbar
-        visible={snackBarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        action={{
-          label: 'Undo',
-          onPress: () => {
-            // Do something
-          },
-        }}>
-        {textSnackbar}
-      </Snackbar>
     </View>
 
 
-  return <View style={[styles.container, {
-    flexDirection: "column"
+  return (
+    <View >
+    <Appbar.Header>
+
+    {!isDetailedView && <Appbar.BackAction onPress={()=>setDetailedView(true)} />}
+    <Appbar.Content title={isDetailedView ? "Heute":"10-Tage-Vorhersage"}/>
+
+    {isDetailedView && <Appbar.Action icon="format-list-bulleted" onPress={()=>setDetailedView(false)} />}
+  </Appbar.Header>
+
+    {isDetailedView ? 
+      
+  <View style={[styles.container, {
+    flexDirection: "column",
+    paddingTop: 40,
+    alignItems:'center'
   }]}>
-    <WeatherDetailed style={{flex:3}} data={response}></WeatherDetailed>
-    <WeatherTable data={responseTable}></WeatherTable>   
-    </View>
 
+    <WeatherDetailed data={response}></WeatherDetailed>
+    <WeatherChart data={response}></WeatherChart> 
+      </View>:
+    <WeatherTable data={responseTable}></WeatherTable>   }
+    </View>
+  )
 };
 
 
